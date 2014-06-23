@@ -50,29 +50,6 @@
 #include <Arduino.h>
 
 #define noConnect -1
-class ShiftOut595
-{
-	const int m_dataPin;
-	const int m_latchPin;
-	const int m_clockPin;
-	const int m_outputEnablePin;
-	const int m_resetPin;
-	// maintain current states
-	uint16_t m_current;
-public:
-	ShiftOut595(int dataPin, 
-		int latchPin, 
-		int clockPin, 
-		int outputEnablePin = noConnect, 
-		int resetPin = noConnect);
-	void init();
-	void write(uint8_t val, uint8_t bitOrder);		
-	void write16(uint16_t val, uint8_t bitOrder);		
-	
-	void writePin(uint8_t pin, bool on);
-	
-	uint16_t allOff(bool latchIt);
-};
 
 template<uint8_t numChips>
 class ShiftOutMulti595
