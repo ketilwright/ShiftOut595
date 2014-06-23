@@ -60,7 +60,7 @@ class ShiftOutMulti595
 	const int m_outputEnablePin;
 	const int m_resetPin;
 	uint8_t  m_current[numChips];
-	
+	// support read/modify/write in writePin
 	typedef uint8_t currentState[numChips];
 public:	
 	ShiftOutMulti595(int dataPin,
@@ -101,12 +101,10 @@ inline void ShiftOutMulti595<numChips>::init()
 	if(noConnect != m_resetPin)
 	{
 		pinMode(m_resetPin, OUTPUT);
-		digitalWrite(m_resetPin, HIGH); // reset everything
-		delay(10);
-		digitalWrite(m_resetPin, LOW); // reset everything
-		
-		delay(10);
-		digitalWrite(m_resetPin, HIGH); // reset everything
+		// reset everything
+		digitalWrite(m_resetPin, HIGH); 
+		digitalWrite(m_resetPin, LOW); 
+		digitalWrite(m_resetPin, HIGH);
 		
 	}
 	// clear everything out
@@ -128,8 +126,6 @@ inline void ShiftOutMulti595<numChips>::write(uint8_t  values[numChips], uint8_t
 		uint8_t & val = values[part];
 		for (uint8_t  i = 0; i < 8; i++)
 		{
-			bool setIt = false;
-			
 			uint16_t bitVal = (LSBFIRST == bitOrder)
 			?
 			val & (1 << i)
@@ -137,26 +133,23 @@ inline void ShiftOutMulti595<numChips>::write(uint8_t  values[numChips], uint8_t
 			val & (1 << (15 - i));
 			digitalWrite(m_dataPin, bitVal ? HIGH : LOW);
 			m_current[part] |= bitVal;
-			
 			digitalWrite(m_clockPin, HIGH);
 			delay(1);
 			digitalWrite(m_clockPin, LOW);
 		}
 	}
 	digitalWrite(m_latchPin, HIGH);
-
 }
 template<uint8_t numChips>
 inline void ShiftOutMulti595<numChips>::writePin(uint32_t pin, bool on)
 {
 	if(pin > (numChips * 8)) return;
 	digitalWrite(m_latchPin, LOW);
-	
 	for(int part = 0; part < numChips; part++)
 	{
 		for (uint8_t  i = 0; i < 8; i++)
 		{
-			if(((8* part) + i) == pin)
+			if(((8 * part) + i) == pin)
 			{
 				if(on)
 				{
@@ -181,13 +174,10 @@ inline void ShiftOutMulti595<numChips>::writePin(uint32_t pin, bool on)
 				}
 			}
 			digitalWrite(m_clockPin, HIGH);
-			//delay(1);
-			// delayMicroseconds(10);
 			digitalWrite(m_clockPin, LOW);
 		}
 	}
 	digitalWrite(m_latchPin, HIGH);
-	//delay(75);
 }
 
 
@@ -210,7 +200,6 @@ inline typename ShiftOutMulti595<numChips>::currentState const& ShiftOutMulti595
 	if(latchIt)
 	{
 		digitalWrite(m_latchPin, HIGH);
-		//m_current = 0;
 		memset(m_current, 0, sizeof(m_current));
 	}
 	return m_current;
