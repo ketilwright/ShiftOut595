@@ -1,0 +1,7 @@
+# atmel studio project & solution files
+*.atsln
+*.cppproj
+*.atsuo
+# build folders
+/Debug
+/Release
