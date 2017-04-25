@@ -118,7 +118,7 @@ inline void ShiftOutMulti595<numChips>::init()
 template<uint8_t numChips>
 inline void ShiftOutMulti595<numChips>::write(uint8_t  values[numChips], uint8_t bitOrder)
 {
-	m_current = 0;
+    for(int i = 0; i < numChips; i++) m_current[i] = 0;
 	digitalWrite(m_latchPin, LOW);
 	
 	for(int part = 0; part < numChips; part++)
